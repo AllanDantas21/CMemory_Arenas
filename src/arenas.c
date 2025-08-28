@@ -25,10 +25,19 @@ void *ArenaAlloc(Arena *arena, uint64_t nbr_elements, uint64_t size_element, uin
     return (void*)total_offset;
 }
 
+void ArenaFree(Arena *arena) {
+    if (arena && arena->buffer) {
+        free(arena->buffer);
+        arena->buffer = NULL;
+        arena->offset = 0;
+        arena->buffer_size = 0;
+    }
+}
+
 int main() {
     Arena arena;
     ArenaInit(&arena, KB(1));
-
-    free(arena.buffer);
+    ArenaAlloc(&arena, 42, sizeof(int), sizeof(int));
+    ArenaFree(&arena);
     return (0);
 }
