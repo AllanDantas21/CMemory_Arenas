@@ -25,6 +25,13 @@ void *ArenaAlloc(Arena *arena, uint64_t nbr_elements, uint64_t size_element, uin
     return (void*)total_offset;
 }
 
+void ArenaReset(Arena *arena) {
+    if (arena) {
+        arena->offset = 0;
+        memset(arena->buffer, 0, arena->buffer_size);
+    }
+}
+
 void ArenaFree(Arena *arena) {
     if (arena && arena->buffer) {
         free(arena->buffer);
@@ -34,10 +41,15 @@ void ArenaFree(Arena *arena) {
     }
 }
 
+#include <stdio.h>
 int main() {
     Arena arena;
     ArenaInit(&arena, KB(1));
     ArenaAlloc(&arena, 42, sizeof(int), sizeof(int));
+    ArenaReset(&arena);
+    char *str = ArenaAlloc(&arena, 16, sizeof(char), sizeof(char));
+    str = "Hello, world!";
+    printf("%s\n", str);
     ArenaFree(&arena);
     return (0);
 }
